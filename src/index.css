@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.column {
+  float: left;
+  width: 50%;
+  padding: 10px;
+}
+
+.divPadding {
+  padding: 5px;
+}
