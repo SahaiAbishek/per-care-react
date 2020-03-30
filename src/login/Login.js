@@ -7,28 +7,61 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: {
+            userLogin: {
                 email: "",
                 password: ""
             },
+            user: {
+                email: "",
+                password: "",
+                firstName: "",
+                lastName: "",
+                zip: ""
+            },
             emailConf: "",
             errors: {},
+            successMessages: {},
             userId: -1
         };
     }
 
     handleEmailChange = event => {
-        const user = { ...this.state.user, email: event.target.value };
-        this.setState({ user });
+        const userLogin = {...this.state.userLogin, email: event.target.value};
+        this.setState({userLogin});
+    }
+
+    handleRegisterEmailChange = event => {
+        const user = {...this.state.user, zip: event.target.value};
+        this.setState({user});
+    }
+
+    handleRegisterZipChange = event => {
+        const user = {...this.state.user, zip: event.target.value};
+        this.setState({user});
     }
 
     handleEmailConfChange = event => {
-        this.setState({ emailConf: event.target.value });
+        this.setState({emailConf: event.target.value});
+    }
+
+    handleLoginPasswordChange = event => {
+        const userLogin = {...this.state.userLogin, password: event.target.value};
+        this.setState({userLogin});
     }
 
     handlePasswordChange = event => {
-        const user = { ...this.state.user, password: event.target.value };
-        this.setState({ user });
+        const user = {...this.state.user, password: event.target.value};
+        this.setState({user});
+    }
+
+    handleFirstNameChange = event => {
+        const user = {...this.state.user, firstName: event.target.value};
+        this.setState({user});
+    }
+
+    handleLastNameChange = event => {
+        const user = {...this.state.user, lastName: event.target.value};
+        this.setState({user});
     }
 
     validateForm() {
@@ -59,8 +92,8 @@ class Login extends React.Component {
 
     handleRegister = event => {
         event.preventDefault();
+        let successMessages = {};
         if (this.validateForm()) {
-            alert("Inside register");
             axios({
                 method: 'post',
                 url: 'http://localhost:12345/petApp/user',
@@ -68,24 +101,33 @@ class Login extends React.Component {
             })
                 .then((response) => {
                     console.log("SUCCESS : " + response);
+                    successMessages["SuccessfulRegistration"] = "Registration Successful Please Login.";
+                    this.setState({
+                        successMessages
+                    });
                 })
                 .catch(function (response) {
                     console.log(response);
                 });
         }
 
+
     }
 
     handleLogin = event => {
         event.preventDefault();
-        axios.get('http://localhost:12345/petApp/user/' + this.state.user.email + "/" + this.state.user.password)
+        this.login();
+    }
+
+    login() {
+        axios.get('http://localhost:12345/petApp/user/' + this.state.userLogin.email + "/" + this.state.userLogin.password)
             .then(response => {
                 this.setState({
                     userId: response.data
                 });
             }).catch(function (error) {
-                console.log("Resource not found");
-            });
+            console.log("Resource not found");
+        });
     }
 
     render() {
@@ -93,7 +135,7 @@ class Login extends React.Component {
             return <Redirect
                 to={{
                     pathname: '/UserActivities',
-                    state: { userId: this.state.userId }
+                    state: {userId: this.state.userId}
                 }}
             />
         }
@@ -109,9 +151,9 @@ class Login extends React.Component {
                                 <input
                                     type="email"
                                     className="form-control-sm"
-                                    name="email"
+                                    name="loginEmail"
                                     placeholder="Enter email"
-                                    value={this.state.user.email}
+                                    value={this.state.userLogin.email}
                                     onChange={this.handleEmailChange}
                                 >
                                 </input>
@@ -120,26 +162,42 @@ class Login extends React.Component {
                                 <input
                                     type="password"
                                     className="form-control-sm"
-                                    name="password"
+                                    name="loginPassword"
                                     placeholder="Password"
-                                    value={this.state.user.password}
-                                    onChange={this.handlePasswordChange}
+                                    value={this.state.userLogin.password}
+                                    onChange={this.handleLoginPasswordChange}
+                                    onKeyPress={event => {
+                                        if (event.key === 'Enter') {
+                                            this.login()
+                                        }
+                                    }}
                                 >
                                 </input>
                             </div>
                             <div>
-                                <button type="button" className="btn btn-primary" onClick={this.handleLogin}>Sign In</button>
+                                <button type="button" className="btn btn-primary" onClick={this.handleLogin}>Sign In
+                                </button>
                             </div>
                         </div>
                     </form>
                 </div>
+                {/* ---------------Registration code starts here ---------------------------------*/}
                 <div className="column">
                     <form>
                         <div className="form-group row" className="column">
                             <div className="form-group">
                                 <legend>New Users Register Here</legend>
                             </div>
-                            <div className="errorMsg">{this.state.errors.verify}</div>
+                            <div className="errorMsg">
+                                <p className="text-danger">
+                                    {this.state.errors.verify}
+                                </p>
+                            </div>
+                            <div className="errorMsg">
+                                <p className="text-danger">
+                                    {this.state.errors.email}
+                                </p>
+                            </div>
                             <div className="form-group">
                                 <input
                                     type="email"
@@ -147,11 +205,13 @@ class Login extends React.Component {
                                     name="email"
                                     placeholder="Enter email"
                                     value={this.state.user.email}
-                                    onChange={this.handleEmailChange}
+                                    onChange={this.handleRegisterEmailChange}
                                 >
-                                </input>
+                                </input>*
                             </div>
-                            <div className="errorMsg">{this.state.errors.email}</div>
+                            <div className="errorMsg">
+                                <p className="text-danger">{this.state.errors.emailConf}</p>
+                            </div>
                             <div className="form-group">
                                 <input
                                     type="email"
@@ -161,9 +221,11 @@ class Login extends React.Component {
                                     value={this.state.emailConf}
                                     onChange={this.handleEmailConfChange}
                                 >
-                                </input>
+                                </input>*
                             </div>
-                            <div className="errorMsg">{this.state.errors.emailConf}</div>
+                            <div className="errorMsg">
+                                <p className="text-danger">{this.state.errors.password}</p>
+                            </div>
                             <div className="form-group">
                                 <input
                                     type="password"
@@ -173,11 +235,46 @@ class Login extends React.Component {
                                     value={this.state.user.password}
                                     onChange={this.handlePasswordChange}
                                 >
+                                </input>*
+                            </div>
+                            <div className="form-group">
+                                <input
+                                    type="text"
+                                    className="form-control-sm"
+                                    name="firstName"
+                                    placeholder="First Name"
+                                    value={this.state.user.firstName}
+                                    onChange={this.handleFirstNameChange}
+                                >
                                 </input>
                             </div>
-                            <div className="errorMsg">{this.state.errors.password}</div>
+                            <div className="form-group">
+                                <input
+                                    type="text"
+                                    className="form-control-sm"
+                                    name="lastName"
+                                    placeholder="Last Name"
+                                    value={this.state.user.lastName}
+                                    onChange={this.handleLastNameChange}
+                                >
+                                </input>
+                            </div>
+                            <div className="form-group">
+                                <input
+                                    type="text"
+                                    className="form-control-sm"
+                                    name="zip"
+                                    placeholder="ZIP code"
+                                    value={this.state.user.zip}
+                                    onChange={this.handleRegisterZipChange}
+                                >
+                                </input>
+                            </div>
                             <div>
-                                <button type="button" className="btn btn-primary" onClick={this.handleRegister}>Register</button>
+                                <button type="button" className="btn btn-primary"
+                                        onClick={this.handleRegister}>Register
+                                </button>
+                                <p className="text-info"> {this.state.successMessages.SuccessfulRegistration}</p>
                             </div>
                         </div>
                     </form>

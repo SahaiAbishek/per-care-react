@@ -1,15 +1,20 @@
 import React from 'react';
 import NavBar from '../navigation/NavBar';
 import axios from 'axios';
+import LeftNavBar from "../navigation/LeftNavBar";
 
 class UserActivities extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userId: -1,
-            userTimeline: []
+            userId: -1000,
+            userTimeline: [],
+            post: {
+                text: ""
+            }
         }
     }
+
     componentDidMount() {
         this.setState({
             userId: this.props.location.state.userId
@@ -21,16 +26,38 @@ class UserActivities extends React.Component {
                     userTimeline: response.data
                 })
             }).catch(function (error) {
-                console.log("Resource not found");
+            console.log("Resource not found");
+        });
+    }
+
+    handleUserPost = event => {
+        const post = {...this.state.post, text: event.target.value};
+        this.setState({post});
+    }
+
+    postComment = event => {
+        event.preventDefault();
+        axios({
+            method: 'post',
+            url: 'http://localhost:12345/petApp/post/userId/' + this.state.userId + "/",
+            data: this.state.post,
+        })
+            .then((response) => {
+                console.log("SUCCESS : " + response);
+            })
+            .catch(function (response) {
+                console.log(response);
             });
     }
+
     render() {
+        const userID = this.state.userId;
         const timeline = this.state.userTimeline.map((item, key) =>
             <div key={item.postId}>
-                <div class="card border-primary mb-3">
-                    <div class="card-header">{item.user.email}</div>
-                    <div class="card-body">
-                        <p class="card-text">{item.postText}</p>
+                <div className="card border-primary mb-3">
+                    <div className="card-header">{item.user.firstName}</div>
+                    <div className="card-body">
+                        <p className="card-text">{item.postText}</p>
                     </div>
                 </div>
             </div>
@@ -38,18 +65,29 @@ class UserActivities extends React.Component {
         return (
             <div>
                 <div className="card border-secondary mb-3">
-                    <NavBar />
+                    <NavBar userId={userID}/>
                 </div>
-                <div className="form-group" >
+                <div className="sideBar">
+                    <LeftNavBar userId={userID}/>
+                </div>
+                <div className="timeline">
                     <div className="divPadding">
                         <input
                             type="text"
                             className="form-control"
                             id="userPost"
-                            placeholder="Post your updates here" />
+                            placeholder="Post your updates here"
+                            onChange={this.handleUserPost}
+                        />
                     </div>
                     <div className="divPadding">
-                        <button type="button" className="btn btn-primary btn-sm">Post</button>
+                        <button
+                            type="button"
+                            className="btn btn-primary btn-sm"
+                            onClick={this.postComment}
+                        >
+                            Post
+                        </button>
                     </div>
                     {timeline}
                 </div>
