@@ -40,3 +40,9 @@ code {
     width: 10px;
 }
 
+.logo {
+    padding: 5px 5px 5px 5px;
+    display: inline;
+    float: left;
+}
+
