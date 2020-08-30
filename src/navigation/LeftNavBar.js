@@ -22,8 +22,8 @@ class LeftNavBar extends React.Component {
     axios.get('http://localhost:12345/petApp/user/' + this.props.userId + '/')
       .then(response => {
         this.setState({
-          pic: response.data.profilePic.pic,
-          picId: response.data.profilePic.picId
+          pic: response.data.pic
+          // picId: response.data.profilePic.picId
         })
       }).catch(function (error) {
       console.log("Resource not found");

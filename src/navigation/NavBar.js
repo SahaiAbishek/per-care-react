@@ -21,10 +21,13 @@ class NavBar extends React.Component {
           <div className="collapse navbar-collapse" id="navbarColor01">
             <ul className="navbar-nav mr-auto">
               <li className="nav-item active">
-                <NavLink className="nav-link" to={{
-                  pathname: '/UserActivities',
-                  state: {userId: this.props.userId}
-                }}>Home </NavLink>
+                <NavLink className="nav-link" 
+                  to={{
+                    pathname: '/UserActivities',
+                    state: {userId: this.props.userId}
+                  }}>
+                  Home 
+                </NavLink>
               </li>
               <li className="nav-item">
                 <NavLink className="nav-link" to={{

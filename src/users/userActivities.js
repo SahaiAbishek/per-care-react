@@ -128,7 +128,7 @@ class UserActivities extends React.Component {
           <div className="card border-primary mb-3">
             <div className="card-header">
               <img className="logo" src={"data:image/jpeg;base64," + item.user.pic}
-                   height="60" width="80" alt={item.user.userId}
+                   height="40" width="40" alt={item.user.userId}
               />
               <NavLink className="nav-link" to={{
                 pathname: '/PostDetails',
@@ -139,13 +139,13 @@ class UserActivities extends React.Component {
               <p className="card-text">{item.postText}</p>
               { item.picture.pic &&
                 <img src={"data:image/jpeg;base64," + item.picture.pic}
-                     height="60" width="80" alt="some name"
+                     height="200" width="160" alt="some name"
                 />
               }
             </div>
             <div>
-              <button onClick={this.handleLike.bind(this, item)}>
-                <img src={like} height="20" width="20" alt="some name"/>
+              <button type="button" class="btn btn-info" onClick={this.handleLike.bind(this, item)}>
+                Like
               </button>
             </div>
             <div>
